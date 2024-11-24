@@ -10,12 +10,13 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/nuxt": "^0.1.0",
     "nuxt": "^3.14.1592",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@prisma/client": "^5.22.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "prisma": "^5.22.0",

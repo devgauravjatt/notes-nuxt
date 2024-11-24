@@ -12,38 +12,42 @@
         account
       </p>
 
-      <div class="mt-8">
-        <label for="" class="text-zinc-300 text-sm block mb-0.5"
-          >Email Address</label
-        >
-        <input
-          placeholder="you@example.com"
-          type="email"
-          class="block w-full bg-[#27272A] border border-[#3F3F46] rounded text-white px-4 py-2 placeholder:text-zinc-500 text-sm"
-        />
-      </div>
+      <form @submit.prevent="submit">
+        <div class="mt-8">
+          <label for="" class="text-zinc-300 text-sm block mb-0.5"
+            >Email Address</label
+          >
+          <input
+            v-model="email"
+            placeholder="you@example.com"
+            type="email"
+            class="block w-full bg-[#27272A] border border-[#3F3F46] rounded text-white px-4 py-2 placeholder:text-zinc-500 text-sm"
+          />
+        </div>
 
-      <div class="mt-6">
-        <label for="" class="text-zinc-300 text-sm block mb-0.5"
-          >Password</label
-        >
-        <input
-          placeholder="****************"
-          type="password"
-          class="block w-full bg-[#27272A] border border-[#3F3F46] rounded text-white px-4 py-2 placeholder:text-zinc-500 text-sm"
-        />
-      </div>
+        <div class="mt-6">
+          <label for="" class="text-zinc-300 text-sm block mb-0.5"
+            >Password</label
+          >
+          <input
+            v-model="password"
+            placeholder="****************"
+            type="password"
+            class="block w-full bg-[#27272A] border border-[#3F3F46] rounded text-white px-4 py-2 placeholder:text-zinc-500 text-sm"
+          />
+        </div>
 
-      <!-- sign up button -->
-      <div>
-        <button
-          class="w-full mt-4 bg-[#FFAC00] rounded-full px-4 py-2 text-sm font-bold flex justify-center items-center space-x-2"
-        >
-          <span>Sign Up</span>
-          <ArrowRight />
-        </button>
-      </div>
-      <!-- /sign up button -->
+        <!-- sign up button -->
+        <div>
+          <button
+            class="w-full mt-4 bg-[#FFAC00] rounded-full px-4 py-2 text-sm font-bold flex justify-center items-center space-x-2"
+          >
+            <span>Sign Up</span>
+            <ArrowRight />
+          </button>
+        </div>
+        <!-- /sign up button -->
+      </form>
     </div>
     <!-- /sidebar -->
     <!-- note introduction -->
@@ -51,3 +55,23 @@
     <!-- /note introduction -->
   </div>
 </template>
+
+<script setup>
+const email = ref('')
+const password = ref('')
+
+async function submit() {
+  console.log(email.value)
+  console.log(password.value)
+
+  const response = await $fetch('/api/user', {
+    method: 'POST',
+    body: {
+      email: email.value,
+      password: password.value,
+    },
+  })
+
+  console.log(response)
+}
+</script>
