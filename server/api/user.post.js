@@ -13,10 +13,34 @@
 //   their password's look completely different
 
 import bcrypt from 'bcryptjs'
+import validator from 'validator'
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
+
+    if (!validator.isEmail(body.email)) {
+      throw createError({
+        statusCode: 400,
+        message: 'Invalid email, please change.',
+      })
+    }
+
+    if (
+      !validator.isStrongPassword(body.password, {
+        minLength: 8,
+        minLowercase: 0,
+        minUppercase: 0,
+        minNumbers: 0,
+        minSymbols: 0,
+      })
+    ) {
+      throw createError({
+        statusCode: 400,
+        message: 'Password is not minimum 8 characters, please change.',
+      })
+    }
+
     const salt = await bcrypt.genSalt(10)
     const passwordHash = await bcrypt.hash(body.password, salt)
 
