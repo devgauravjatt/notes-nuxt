@@ -12,8 +12,12 @@
 // - Each user gets their own salt so even if two users have the same PW
 //   their password's look completely different
 
+// Generate secret:
+// - node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
 import bcrypt from 'bcryptjs'
 import validator from 'validator'
+import jwt from 'jsonwebtoken'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -45,13 +49,18 @@ export default defineEventHandler(async (event) => {
     const passwordHash = await bcrypt.hash(body.password, salt)
 
     // Sends to database
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email: body.email,
         password: passwordHash,
         salt: salt,
       },
     })
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET)
+
+    setCookie(event, 'NoteNestJWT', token)
+
     return { data: 'success!' }
   } catch (error) {
     console.log(error.code)
