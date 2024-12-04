@@ -14,20 +14,21 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String  
-  salt     String
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  salt      String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  notes     Note[]
 }
 
 model Note {
-  id Int @id @default(autoincrement())
-  text String @db.Text
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  text      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
 }
-
-
-
