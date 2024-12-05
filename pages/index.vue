@@ -115,7 +115,10 @@
         </button>
 
         <button>
-          <TrashIcon class="text-[#6D6D73] hover:text-white" />
+          <TrashIcon
+            class="text-[#6D6D73] hover:text-white"
+            @click="deleteNote"
+          />
         </button>
       </div>
 
@@ -144,6 +147,8 @@
 </template>
 
 <script setup>
+import Swal from 'sweetalert2'
+
 const updatedNote = ref('')
 const notes = ref([])
 const selectedNote = ref({})
@@ -151,6 +156,29 @@ const textarea = ref(null)
 definePageMeta({
   middleware: ['auth'],
 })
+
+async function deleteNote() {
+  const { isConfirmed } = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'This will delete your note permanently, are you extra sure you like to do this?',
+    icon: 'warning',
+    confirmButtonText: 'Yes, delete',
+    showCancelButton: true,
+  })
+
+  if (isConfirmed) {
+    // truly delete
+    await $fetch(`/api/notes/${selectedNote.value.id}`, {
+      method: 'DELETE',
+    })
+
+    const index = notes.value.findIndex((note) => {
+      return note.id === selectedNote.value.id
+    })
+    console.log(index)
+    notes.value.splice(index, 1)
+  }
+}
 
 async function createNewNote() {
   try {
