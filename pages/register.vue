@@ -8,8 +8,10 @@
       </h1>
       <p class="text-zinc-300 text-sm mt-0.5">
         Already registered?
-        <span class="font-bold text-[#FFAC00] underline">Log in</span> to your
-        account
+        <nuxt-link to="/login" class="font-bold text-[#FFAC00] underline"
+          >Log in</nuxt-link
+        >
+        to your account
       </p>
 
       <form @submit.prevent="submit">

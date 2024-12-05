@@ -1,11 +1,13 @@
 <template>
   <div class="flex bg-zinc-900 h-screen">
     <!-- sidebar -->
-    <div class="bg-black w-[338px] p-8">
-      <Logo />
+    <div class="bg-black w-[338px] p-8 flex flex-col overflow-scroll">
+      <div>
+        <Logo />
+      </div>
 
       <!-- today main container -->
-      <div>
+      <div class="flex-grow">
         <p class="text-xs font-bold text-[#C2C2C5] mt-12 mb-4">Today</p>
         <div class="ml-2 space-y-2">
           <div
@@ -15,12 +17,7 @@
               'bg-[#A1842C]': note.id === selectedNote.id,
               'hover:bg-[#A1842C]/50': note.id !== selectedNote.id,
             }"
-            @click="
-              () => {
-                selectedNote = note
-                updatedNote = note.text
-              }
-            "
+            @click="setNote(note)"
           >
             <h3 class="text-sm font-bold text-[#F4F4F5] truncate">
               {{ note.text.substring(0, 50) }}
@@ -49,7 +46,7 @@
               'bg-[#A1842C]': note.id === selectedNote.id,
               'hover:bg-[#A1842C]/50': note.id !== selectedNote.id,
             }"
-            @click="selectedNote = note"
+            @click="setNote(note)"
           >
             <h3 class="text-sm font-bold text-[#F4F4F5] truncate">
               {{ note.text.substring(0, 50) }}
@@ -61,7 +58,7 @@
                   ? 'Today'
                   : new Date(note.updatedAt).toLocaleDateString()
               }}</span>
-              <span class="text-xs text-[#D6D6D6]"
+              <span v-if="note.text.length > 50" class="text-xs text-[#D6D6D6]"
                 >... {{ note.text.substring(50, 100) }}</span
               >
             </div>
@@ -81,7 +78,7 @@
               'bg-[#A1842C]': note.id === selectedNote.id,
               'hover:bg-[#A1842C]/50': note.id !== selectedNote.id,
             }"
-            @click="selectedNote = note"
+            @click="setNote(note)"
           >
             <h3 class="text-sm font-bold text-[#F4F4F5] truncate">
               {{ note.text.substring(0, 50) }}
@@ -93,7 +90,7 @@
                   ? 'Today'
                   : new Date(note.updatedAt).toLocaleDateString()
               }}</span>
-              <span class="text-xs text-[#D6D6D6]"
+              <span v-if="note.text.length > 50" class="text-xs text-[#D6D6D6]"
                 >... {{ note.text.substring(50, 100) }}</span
               >
             </div>
@@ -141,6 +138,13 @@
         >
         </textarea>
       </div>
+
+      <button
+        class="text-zinc-400 hover:text-white text-sm font-bold absolute right-0 bottom-0 p-8"
+        @click="logout"
+      >
+        Logout
+      </button>
     </div>
     <!-- /note container -->
   </div>
@@ -156,6 +160,17 @@ const textarea = ref(null)
 definePageMeta({
   middleware: ['auth'],
 })
+
+function setNote(note) {
+  selectedNote.value = note
+  updatedNote.value = note.text
+}
+
+function logout() {
+  const jwtCookie = useCookie('NoteNestJWT')
+  jwtCookie.value = null
+  navigateTo('/login')
+}
 
 async function deleteNote() {
   const { isConfirmed } = await Swal.fire({
@@ -247,6 +262,10 @@ onMounted(async () => {
   notes.value.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
 
   if (notes.value.length > 0) selectedNote.value = notes.value[0]
+  else {
+    await createNewNote()
+    selectedNote.value = notes.value[0]
+  }
 
   updatedNote.value = selectedNote.value.text
 
