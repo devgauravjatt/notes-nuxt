@@ -31,5 +31,5 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@prisma/nuxt'],
+  modules: ['@prisma/nuxt', '@vueuse/nuxt'],
 })
